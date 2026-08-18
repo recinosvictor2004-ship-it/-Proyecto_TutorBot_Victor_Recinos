@@ -227,7 +227,7 @@ El sistema:
 
 ### 🖼️ Imagen del Subflujo de Reporte
 
-![Texto alternativo](docs/img/reporte.png)
+[Texto alternativo](docs/img/reporte.png)
 
 
 Genera:
