@@ -66,3 +66,7 @@ venv/
 # Si tienes carpetas de presentaciones, PDFs, etc.
 presentacion/
 presentaciones/
+
+docs
+
+

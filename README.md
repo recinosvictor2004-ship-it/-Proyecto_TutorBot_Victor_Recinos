@@ -37,13 +37,13 @@ Telegram Bot → n8n → Google Gemini → Google Sheets → Telegram (respuesta
 ### 🖼️ Imagen de la Arquitectura
 > Coloca aquí tu diagrama PNG exportado desde Draw.io o n8n.
 
-docs/img/arquitectura.png
+![Texto alternativo](docs/img/arquitectura.png)
 
 
 ---
 
 ## 🗂 Estructura del Proyecto
-
+''' text 
 TutorBot/
 │
 ├── workflows/
@@ -62,7 +62,7 @@ TutorBot/
 ├── .gitignore
 └── README.md
 
-
+'''
 ---
 
 ## 📄 Base de Datos (Google Sheets)
@@ -112,7 +112,7 @@ El sistema usa un documento llamado **TutorBot_DB** con las siguientes hojas:
 
 ### 🖼️ Imagen del Flujo Completo
 
-docs/img/flujo_completo.png
+docs/img/arquitectura.png
 
 
 ---
@@ -187,7 +187,8 @@ Pasos:
 
 ### 🖼️ Imagen del Subflujo de Cancelación
 
-docs/img/flujo_cancelacion.png
+![Texto alternativo](cancelacion.png)
+
 
 
 El usuario indica qué tutoría cancelar → se actualiza el estado en Sheets.
@@ -205,11 +206,13 @@ Se filtran tutorías por el ID del estudiante.
 
 ## 8️⃣ Recordatorios Automáticos (cada día 07:00)
 
-docs/img/flujo_consulta.png
+![Texto alternativo](docs/img/recordatorio.png)
+
 
 ### 🖼️ Imagen del Subflujo de Recordatorios
 
-docs/img/flujo_recordatorios.png
+![Texto alternativo](docs/img/recordatoriotelegram.png)
+
 
 
 El sistema:
@@ -224,7 +227,7 @@ El sistema:
 
 ### 🖼️ Imagen del Subflujo de Reporte
 
-docs/img/flujo_reporte.png
+![Texto alternativo](docs/img/reporte.png)
 
 
 Genera:
