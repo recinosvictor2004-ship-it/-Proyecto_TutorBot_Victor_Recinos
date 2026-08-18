@@ -4,8 +4,6 @@ Automatización completa de registro, asignación, seguimiento y recordatorios d
 ---
 
 ## 🖼️ Vista General del Proyecto
-> Coloca aquí una imagen general del flujo completo exportado desde n8n.
-
 Ejemplo:
 
 docs/img/flujo_completo.png
@@ -35,7 +33,6 @@ Telegram Bot → n8n → Google Gemini → Google Sheets → Telegram (respuesta
 
 
 ### 🖼️ Imagen de la Arquitectura
-> Coloca aquí tu diagrama PNG exportado desde Draw.io o n8n.
 
 ![Texto alternativo](docs/img/arquitectura.png)
 
