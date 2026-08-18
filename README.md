@@ -1,126 +1,86 @@
-# 📚 TutorBot – Sistema Automatizado de Gestión de Tutorías  
-Automatización completa de registro, asignación, seguimiento y recordatorios de tutorías académicas usando **Telegram Bot + n8n + Google Sheets + Google Gemini**.
+# 📘 Proyecto TutorBot — Sistema Automatizado de Tutorías (n8n + IA + Telegram + Google Sheets)
+
+## 📌 Descripción General
+
+TutorBot es un sistema automatizado que permite gestionar tutorías mediante un chatbot en Telegram.  
+El proyecto está dividido en cuatro flujos independientes dentro de n8n, cada uno con su propio trigger, pero todos conectados por la misma base de datos en Google Sheets.
+
+Los flujos son:
+1. AI Agent (Chatbot de tutorías)
+2. Sembrado de base de datos (manual)
+3. Recordatorios diarios (programado)
+4. Reporte semanal (programado)
 
 ---
 
-## 🖼️ Vista General del Proyecto
-Ejemplo:
+# 🗂️ Base de Datos (Google Sheets)
 
-docs/img/flujo_completo.png
+El documento contiene cuatro hojas:
 
+## 1. **TUTORES**
+- id_tutor  
+- nombre  
+- especialidad_materias  
+- estado  
 
----
+## 2. **DISPONIBILIDAD**
+- id_dispo  
+- id_tutor  
+- dia_semana  
+- hora_inicio  
+- hora_fin  
+- estado  
 
-## 🚀 Descripción General
-TutorBot es un asistente académico que permite a estudiantes solicitar tutorías desde Telegram.  
-El flujo en **n8n** gestiona automáticamente:
+## 3. **TUTORIAS**
+- id_tutoria  
+- id_estudiante  
+- id_tutor  
+- materia  
+- fecha  
+- hora  
+- estado  
 
-- Registro y seguimiento de sesiones del usuario  
-- Solicitud de tutorías mediante un wizard guiado  
-- Validación de fechas y materias  
-- Asignación automática de tutor disponible  
-- Notificación al tutor asignado  
-- Consulta y cancelación de tutorías  
-- Recordatorios diarios de tutorías próximas  
-- Reporte semanal de actividad  
-- Base de datos en Google Sheets totalmente integrada  
-
----
-
-## 🧩 Arquitectura del Sistema
-
-Telegram Bot → n8n → Google Gemini → Google Sheets → Telegram (respuesta)
-
-
-### 🖼️ Imagen de la Arquitectura
-
-![Texto alternativo](docs/img/arquitectura.png)
-
-
----
-
-## 🗂 Estructura del Proyecto
-''' text 
-TutorBot/
-│
-├── workflows/
-│   └── My workflow 2.json
-│
-├── docs/
-│   ├── arquitectura.png
-│   └── img/
-│       ├── flujo_completo.png
-│       ├── flujo_solicitud.png
-│       ├── flujo_asignacion.png
-│       ├── flujo_cancelacion.png
-│       ├── flujo_recordatorios.png
-│       └── flujo_reporte.png
-│
-├── .gitignore
-└── README.md
-
-'''
----
-
-## 📄 Base de Datos (Google Sheets)
-
-El sistema usa un documento llamado **TutorBot_DB** con las siguientes hojas:
-
-### **1. TUTORES**
-| Campo | Descripción |
-|-------|-------------|
-| id_tutor | Identificador |
-| nombre | Nombre del tutor |
-| especialidad_materias | Materias que puede impartir |
-| estado | Activo / Inactivo |
-
-### **2. DISPONIBILIDAD**
-| Campo | Descripción |
-|-------|-------------|
-| id_dispo | ID de disponibilidad |
-| id_tutor | Tutor asociado |
-| dia_semana | Día |
-| hora_inicio | Inicio |
-| hora_fin | Fin |
-| estado | Libre / Ocupado |
-
-### **3. TUTORIAS**
-| Campo | Descripción |
-|-------|-------------|
-| id_tutoria | ID único |
-| id_estudiante | Telegram ID |
-| id_tutor | Tutor asignado |
-| materia | Materia |
-| fecha | Fecha |
-| hora | Hora |
-| estado | Asignada / Cancelada / Confirmada |
-
-### **4. SESSIONS**
-| Campo | Descripción |
-|-------|-------------|
-| telegram_user | ID del usuario |
-| pantalla_actual | Pantalla del wizard |
-| paso_actual | Paso del flujo |
-| datos_parciales | JSON con datos temporales |
+## 4. **SESSIONS**
+- telegram_user  
+- pantalla_actual  
+- paso_actual  
+- datos_parciales  
 
 ---
 
-## 🔄 Flujo Automatizado (n8n)
+# 🤖 PARTE 1 — AI Agent (Chatbot de Tutorías)
 
-### 🖼️ Imagen del Flujo Completo
+Este flujo atiende al estudiante en tiempo real mediante Telegram.
 
-docs/img/arquitectura.png
+### Componentes del flujo
 
+### **Telegram Trigger**
+- Activa el flujo cuando el usuario envía un mensaje.
+- Configurado para escuchar únicamente mensajes de texto.
 
----
+### **AI Agent**
+- Es el cerebro del sistema.
+- Interpreta el mensaje del usuario.
+- Usa un `systemMessage` que contiene:
+  - reglas del bot
+  - estructura de la base de datos
+  - flujo de solicitud de tutoría
+  - flujo de consulta de tutorías
+  - flujo de cancelación
+- Decide qué herramienta usar.
+- Genera la respuesta final.
 
-## 1️⃣ Telegram Trigger
-Recibe mensajes del usuario y activa el flujo principal.
+### **Modelo de Lenguaje (Gemini)**
+- Procesa lenguaje natural.
+- Extrae datos como fechas, materias e IDs.
+- Genera respuestas coherentes.
 
----
+### **Simple Memory**
+- Guarda las últimas 10 interacciones del usuario.
+- Permite flujos de varios pasos.
 
-## 2️⃣ Google Gemini – Agente Inteligente
-El nodo **AI Agent** interpreta el mensaje del usuario y ejecuta acciones usando herramientas:
+### **Herramientas del AI Agent**
+El agente usa herramientas para interactuar con Google Sheets:
 
 - leer_tutores  
 - leer_disponibilidad  
@@ -131,143 +91,176 @@ El nodo **AI Agent** interpreta el mensaje del usuario y ejecuta acciones usando
 - guardar_sesion  
 - notificar_tutor  
 
-El prompt incluye reglas estrictas para:
+Cada herramienta está configurada con:
+- `documentId`
+- `sheetName`
+- `operation`
+- `matchingColumns`
+- valores dinámicos con `$fromAI()`
 
-- Validar fechas  
-- Validar materias  
-- No inventar datos  
-- Mantener contexto entre mensajes  
-- Responder siempre en español  
-
----
-
-## 3️⃣ Memoria de Sesión
-El nodo **Simple Memory** mantiene las últimas 10 interacciones del usuario para conversaciones naturales.
+### **Responder por Telegram**
+- Envía la respuesta final al usuario.
 
 ---
 
-## 4️⃣ Herramientas de Google Sheets
-El flujo incluye 8 herramientas conectadas a Google Sheets:
+# 🌱 PARTE 2 — Sembrado de Base de Datos (Manual)
 
-- leer_tutores  
-- leer_disponibilidad  
-- consultar_tutorias  
-- registrar_tutoria  
-- cancelar_tutoria  
-- leer_sesion  
-- guardar_sesion  
-- Escribir datos iniciales (sembrado)
+Este flujo se ejecuta una sola vez para crear las tablas iniciales.
 
----
+### Componentes:
+1. Manual Trigger  
+2. Nodos Code (generan datos en JSON)  
+3. Google Sheets (appendOrUpdate)
 
-## 5️⃣ Wizard de Solicitud de Tutoría
+Ejemplo de nodo Code para sembrar tutorías:
 
-### 🖼️ Imagen del Subflujo de Solicitud
+```javascript
+return [
+  {
+    json: {
+      id_tutoria: 'TU001',
+      id_estudiante: '1794562485',
+      id_tutor: 'T001',
+      materia: 'Matemática',
+      fecha: '2026-08-17',
+      hora: '08:00',
+      estado: 'Asignada'
+    }
+  }
+];
+-----
+### ⏰ PARTE 3 — Recordatorios Diarios (Programado)
+Este flujo envía recordatorios automáticos de tutorías del día siguiente.
 
-docs/img/flujo_solicitud.png
+Componentes:
+Schedule Trigger (07:00)
 
+Leer TUTORIAS
 
-Pasos:
+Nodo Code (filtra tutorías de mañana)
 
-1. Mostrar materias disponibles  
-2. Solicitar materia  
-3. Solicitar fecha  
-4. Validar formato y que sea futura  
-5. Buscar tutor disponible  
-6. Confirmar con el usuario  
-7. Registrar tutoría  
-8. Notificar al tutor  
+Telegram (envía recordatorio)
 
----
+Ejemplo de filtrado:
 
-## 6️⃣ Cancelación de Tutorías
+const tutorias = $input.all();
+const hoy = new Date();
+const manana = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
 
-### 🖼️ Imagen del Subflujo de Cancelación
+const fechaManana = manana.toISOString().split('T')[0];
 
-![Texto alternativo](cancelacion.png)
-
-
-
-El usuario indica qué tutoría cancelar → se actualiza el estado en Sheets.
-
----
-
-## 7️⃣ Consulta de Tutorías
-
-### 🖼️ Imagen del Subflujo de Consulta
-
-
-Se filtran tutorías por el ID del estudiante.
-
----
-
-## 8️⃣ Recordatorios Automáticos (cada día 07:00)
-
-![Texto alternativo](docs/img/recordatorio.png)
+return tutorias
+  .filter(t => t.json.fecha === fechaManana && (t.json.estado === 'Asignada' || t.json.estado === 'Confirmada'))
+  .map(t => ({
+    json: {
+      id_estudiante: t.json.id_estudiante,
+      mensaje: `Recordatorio: tienes tutoría de ${t.json.materia} el ${t.json.fecha} a las ${t.json.hora}.`
+    }
+  }));
 
 
-### 🖼️ Imagen del Subflujo de Recordatorios
+-------
 
-![Texto alternativo](docs/img/recordatoriotelegram.png)
+📊 PARTE 4 — Reporte Semanal (Programado)
+Este flujo genera métricas de actividad cada lunes.
 
+Componentes:
+Schedule Trigger (lunes 08:00)
 
+Leer TUTORIAS
 
-El sistema:
+Nodo Code (calcula métricas)
 
-- Lee tutorías  
-- Filtra las que ocurren mañana  
-- Envía recordatorio por Telegram  
+Telegram (envía reporte)
 
----
+Ejemplo de cálculo:
 
-## 9️⃣ Reporte Semanal (cada lunes 08:00)
+const tutorias = $input.all();
+const hoy = new Date();
+const semanaPasada = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - 7);
 
-### 🖼️ Imagen del Subflujo de Reporte
+const recientes = tutorias.filter(t => new Date(t.json.fecha) >= semanaPasada);
 
-[Texto alternativo](docs/img/reporte.png)
+const porEstado = {};
+const porMateria = {};
 
+recientes.forEach(t => {
+  porEstado[t.json.estado] = (porEstado[t.json.estado] || 0) + 1;
+  porMateria[t.json.materia] = (porMateria[t.json.materia] || 0) + 1;
+});
 
-Genera:
+return [
+  {
+    json: {
+      mensaje: `Reporte semanal:\n\nPor estado:\n${JSON.stringify(porEstado, null, 2)}\n\nPor materia:\n${JSON.stringify(porMateria, null, 2)}`
+    }
+  }
+];
 
-- Conteo por estado  
-- Conteo por materia  
-- Rango de fechas  
-- Mensaje resumen para administración  
+-----
 
----
+🔗 Conexión entre las 4 partes
+Las partes no están conectadas con flechas en n8n.
+La conexión real es:
 
-## 🤖 Inteligencia Artificial (Gemini)
-Gemini se usa para:
+👉 El mismo Google Sheets (documentId compartido)
+El AI Agent escribe tutorías.
 
-- Interpretar mensajes  
-- Guiar el wizard  
-- Validar datos  
-- Generar respuestas naturales  
-- Crear IDs únicos de tutorías  
-- Construir mensajes para tutores y estudiantes  
+El flujo diario las lee para enviar recordatorios.
 
----
+El flujo semanal las lee para generar métricas.
 
-## 📦 Archivo del Flujo
-El flujo principal se encuentra en:
+El flujo manual crea las tablas iniciales.
 
-workflows/My workflow 2.json
+-------
 
+🧠 Sub‑flujos del AI Agent
+1. Solicitar tutoría
+Elegir materia
 
----
+Elegir fecha
 
-## 🎓 Resumen para Presentación Académica
-TutorBot demuestra:
+Confirmar tutoría
 
-- Integración avanzada entre n8n, Telegram y Google Sheets  
-- Uso de IA para control de flujo y validación  
-- Persistencia de estado entre mensajes  
-- Automatización de procesos académicos reales  
-- Arquitectura modular y escalable  
-- Documentación profesional lista para GitHub  
+Registrar en Google Sheets
 
----
+Notificar al tutor
 
-## 👨‍💻 Autor
-**Victor Manuel Recinos Gómez**  
-Ingeniería en Ciencias y Sistemas – USAC  
+2. Consultar tutorías
+Leer tutorías del estudiante
+
+Mostrar estado y fechas
+
+3. Cancelar tutoría
+Verificar tutoría
+
+Actualizar estado
+
+Notificar al tutor
+
+Confirmar al estudiante
+
+🛠️ Tecnologías Utilizadas
+n8n
+
+Telegram Bot API
+
+Google Sheets API
+
+Google Gemini AI
+
+JavaScript (nodos Code)
+
+🏁 Conclusión
+TutorBot es un sistema modular, escalable y completamente automatizado que integra IA, mensajería y base de datos en un flujo robusto.
+Su arquitectura basada en triggers y herramientas permite:
+
+atención en tiempo real
+
+persistencia de datos
+
+automatización diaria
+
+reportes semanales
+
+flujos conversacionales inteligentes
