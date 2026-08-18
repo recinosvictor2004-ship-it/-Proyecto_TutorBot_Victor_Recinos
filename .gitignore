@@ -1,0 +1,68 @@
+# ============================
+#   ARCHIVOS DEL SISTEMA
+# ============================
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# ============================
+#   ONEDRIVE / WINDOWS
+# ============================
+OneDrive/
+OneDriveTemp/
+*.lnk
+NTUSER.DAT
+NTUSER.DAT*
+AppData/
+Saved Games/
+Searches/
+
+# ============================
+#   VISUAL STUDIO CODE
+# ============================
+.vscode/
+.vscode-shared/
+
+# ============================
+#   PYTHON (si usas scripts)
+# ============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env/
+venv/
+.venv/
+
+# ============================
+#   N8N
+# ============================
+# n8n genera archivos temporales en algunos casos
+.n8n/
+
+# ============================
+#   LOGS
+# ============================
+*.log
+
+# ============================
+#   ARCHIVOS TEMPORALES
+# ============================
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# ============================
+#   ARCHIVOS DE EDITORES
+# ============================
+*.sublime-workspace
+*.sublime-project
+
+# ============================
+#   ARCHIVOS DE PROYECTOS QUE NO VAN AL REPO
+# ============================
+# Si tienes carpetas de presentaciones, PDFs, etc.
+presentacion/
+presentaciones/
